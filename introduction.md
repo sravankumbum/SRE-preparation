@@ -178,29 +178,29 @@ flowchart TD
 
 User --> Route53[Route 53]
 Route53 --> CloudFront[CloudFront CDN]
-CloudFront --> S3[S3 (React Frontend)]
+CloudFront --> S3[S3 React Frontend]
 
 CloudFront --> ALB[Application Load Balancer]
 
-ALB --> Ingress[NGINX Ingress (EKS)]
+ALB --> Ingress[NGINX Ingress EKS]
 
-Ingress --> ServiceA[Service A - Node.js]
-Ingress --> ServiceB[Service B - Node.js]
-Ingress --> ServiceC[Service C - Node.js]
+Ingress --> ServiceA[Service A NodeJS]
+Ingress --> ServiceB[Service B NodeJS]
+Ingress --> ServiceC[Service C NodeJS]
 
-ServiceA --> RDS[(RDS PostgreSQL - Multi AZ)]
+ServiceA --> RDS[RDS PostgreSQL Multi AZ]
 ServiceB --> RDS
 ServiceC --> RDS
 
-ServiceA --> Redis[(ElastiCache Redis)]
+ServiceA --> Redis[ElastiCache Redis]
 
-ServiceA --> SQS[SNS / SQS]
+ServiceA --> SQS[SNS SQS]
 SQS --> ServiceB
 SQS --> ServiceC
 
 User --> Cognito[Amazon Cognito]
 Cognito --> ALB
 
-ServiceA --> NR[New Relic]
-ServiceB --> NR
-ServiceC --> NR
+ServiceA --> NewRelic[New Relic]
+ServiceB --> NewRelic
+ServiceC --> NewRelic
