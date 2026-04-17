@@ -167,32 +167,40 @@ We operate a **multi-tenant B2B SaaS platform** serving ~15–20 enterprise clie
 
 ## Request Flow Diagram
 
-![Request Flow](images/request-flow.png)
+![Request Flow](images/request-flow.jpeg)
 
 ---
 
-## Architecture Diagram (Text)
-User
-│
-▼
-Route 53 → CloudFront → S3 (React Frontend)
-│
-▼
-ALB (Application Load Balancer)
-│
-▼
-EKS Cluster
-├── Service A (Node.js) ──┐
-├── Service B (Node.js) ──┼──► RDS PostgreSQL (Multi-AZ)
-└── Service C (Node.js) ──┘ │
-│ ElastiCache (Redis)
-▼
-SNS / SQS
-(Async messaging)
-│
-Amazon Cognito
-(Authentication)
+## Architecture Diagram
 
-Monitoring: New Relic
-IaC: Terraform
-CI/CD: Jenkins + GitHub Actions
+```mermaid
+flowchart TD
+
+User --> Route53[Route 53]
+Route53 --> CloudFront[CloudFront CDN]
+CloudFront --> S3[S3 (React Frontend)]
+
+CloudFront --> ALB[Application Load Balancer]
+
+ALB --> Ingress[NGINX Ingress (EKS)]
+
+Ingress --> ServiceA[Service A - Node.js]
+Ingress --> ServiceB[Service B - Node.js]
+Ingress --> ServiceC[Service C - Node.js]
+
+ServiceA --> RDS[(RDS PostgreSQL - Multi AZ)]
+ServiceB --> RDS
+ServiceC --> RDS
+
+ServiceA --> Redis[(ElastiCache Redis)]
+
+ServiceA --> SQS[SNS / SQS]
+SQS --> ServiceB
+SQS --> ServiceC
+
+User --> Cognito[Amazon Cognito]
+Cognito --> ALB
+
+ServiceA --> NR[New Relic]
+ServiceB --> NR
+ServiceC --> NR
