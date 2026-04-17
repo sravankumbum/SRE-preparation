@@ -1,0 +1,8 @@
+# Introduction
+
+## Tell me about yourself
+
+"I'm Sravan, a DevOps Engineer with around 5 years of experience, currently working at TCS in the Cloud & Platform Operations team. My team is a cross-functional group of about 8 engineers — including 3 DevOps engineers, 2 cloud architects, a DBA, and a couple of application developers — all working together to ensure platform reliability and delivery velocity.
+In terms of my personal contribution, I primarily own the Kubernetes infrastructure — we run production workloads on Amazon EKS, and I'm responsible for cluster health, auto-scaling policies, ingress configuration, and high availability. I also lead our CI/CD pipeline setup using Jenkins and GitHub Actions, which has significantly reduced our deployment cycle time.
+Beyond that, I handle Terraform-based infrastructure provisioning for our AWS environments and I've written several Python automation scripts that eliminated a lot of manual toil for the team. On the observability side, I manage our New Relic dashboards and alerting, and we've been consistently maintaining 99.9% uptime in production.
+I also participate actively in incident management and RCA — which is something I've come to enjoy because it sharpens your ability to think under pressure and build more resilient systems. That's actually one of the reasons I'm now targeting an SRE role — I want to be more deeply involved in reliability engineering, SLO/SLI definition, and building systems that are self-healing by design.
