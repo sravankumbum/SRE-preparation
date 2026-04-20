@@ -348,7 +348,7 @@ jobs:
         run: |
           docker build -t payment-service:${{ github.sha }} .
           docker push $ECR_REGISTRY/payment-service:${{ github.sha }}
-```"
+```
 
 ---
 
