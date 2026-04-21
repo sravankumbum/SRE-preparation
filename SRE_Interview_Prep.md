@@ -65,7 +65,7 @@ I also participate actively in **incident management and RCA** — which is some
 
 At the **frontend**, we have a React-based web application served via **CloudFront** as the CDN, backed by an **S3 bucket** for static assets. All traffic comes in through **Route 53** for DNS resolution.
 
-The **API layer** consists of multiple independent microservices built in **Node.js**. These services are containerized using **Docker** and deployed on **Amazon EKS**. Each microservice has its own deployment, and we use an **NGINX Ingress Controller** to route traffic to the appropriate service based on path or hostname rules.
+The **API layer** consists of multiple independent microservices built in **Java**. These services are containerized using **Docker** and deployed on **Amazon EKS**. Each microservice has its own deployment, and we use an **NGINX Ingress Controller** to route traffic to the appropriate service based on path or hostname rules.
 
 For **inter-service communication**, we use REST APIs for synchronous calls and **SNS/SQS** for asynchronous event-driven communication — for example, payment event triggers go through SQS to decouple the services.
 
@@ -325,7 +325,7 @@ spec:
 - **Secrets management** — AWS credentials, ECR tokens stored as GitHub Secrets
 - **Environments** — dev, staging, prod with required reviewers for prod deployments
 - **Reusable workflows** — we have a shared `build-and-push.yml` workflow reused across 3 microservices
-- **Matrix builds** — run tests across multiple Node.js versions in parallel
+- **Matrix builds** — run tests across multiple Java versions in parallel
 - **OIDC integration** — GitHub Actions uses OIDC to assume AWS IAM roles without storing static credentials
 
 **Example workflow snippet:**
@@ -405,7 +405,7 @@ On a Monday morning, we started seeing a spike in payment failure rate — it we
 - Checked RDS console — the primary DB was healthy, but connection count was at 98% of `max_connections`
 
 **Root Cause:**
-A developer had merged a code change the previous Friday that introduced an **unintentional connection pool misconfiguration** — the `pool.max` setting in the Node.js app was accidentally set to `500` instead of `50`. With 6 pods running, we were attempting 3,000 connections total, exhausting RDS's max connections limit of 2,000. New connections were being rejected, causing timeout errors.
+A developer had merged a code change the previous Friday that introduced an **unintentional connection pool misconfiguration** — the `pool.max` setting in the Java app was accidentally set to `500` instead of `50`. With 6 pods running, we were attempting 3,000 connections total, exhausting RDS's max connections limit of 2,000. New connections were being rejected, causing timeout errors.
 
 **Resolution:**
 1. Immediately scaled down Payment Service from 6 pods to 2 pods to relieve connection pressure — error rate dropped to 0% within 2 minutes
@@ -548,7 +548,7 @@ This means during a deployment, users experience **zero dropped connections** �
 **How we achieve RTO of 2 minutes:**
 - RDS Multi-AZ **automatic failover** — AWS detects primary failure, promotes standby, updates the CNAME DNS endpoint — typically completes in **60–120 seconds**
 - Our application uses the **RDS endpoint DNS name** (not a hardcoded IP), so connection rerouting is automatic
-- We set **connection pool retry logic** in our Node.js services — on connection failure, pool retries with exponential backoff for up to 90 seconds before alerting
+- We set **connection pool retry logic** in our Java services — on connection failure, pool retries with exponential backoff for up to 90 seconds before alerting
 
 **For a worst-case full region failure:**
 - We have RDS **cross-region read replica** in a secondary AWS region
@@ -774,7 +774,7 @@ Platinum client pods are scheduled first and evicted last during resource pressu
 2. AWS promotes the **standby replica** to primary — synchronous replication means zero data loss
 3. RDS updates the **CNAME DNS endpoint** to point to the new primary
 4. DNS propagation takes ~60 seconds
-5. Our Node.js app connection pool detects broken connections, retries with exponential backoff
+5. Our Java app connection pool detects broken connections, retries with exponential backoff
 6. Within 60–120 seconds, new connections route to the new primary automatically
 
 **What we do during failover:**
